@@ -1,20 +1,24 @@
+import { fonts } from '@/constants/Fonts';
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-const Login = () => {
+const Index = () => {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
-      {/* Logo and Tagline */}
+      {/* Logo and solgan */}
       <View style={styles.logoContainer}>
-        <Text style={styles.logo}>P</Text>
+        <Image source={require('../assets/images/PureLogo1.png')} style={{ width: 131, height: 195 }} />
         <Text style={styles.tagline}>Purely about podcasts.</Text>
       </View>
 
       {/* Buttons */}
-      <TouchableOpacity style={styles.signupButton} onPress={() => alert('Sign up')}>
+      <TouchableOpacity style={styles.signupButton} onPress={() => router.push('/register')}>
         <Text style={styles.signupButtonText}>Sign up now</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.loginButton} onPress={() => alert('Login')}>
+      <TouchableOpacity style={styles.loginButton} onPress={() => router.push('/login')}>
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
     </View>
@@ -33,11 +37,11 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   logo: {
-    fontSize: 100,
-    fontWeight: 'bold',
-    color: '#000',
+    flexShrink: 0
+
   },
   tagline: {
+    fontFamily: fonts.Medium,
     fontSize: 16,
     color: '#888',
     marginTop: 10,
@@ -51,8 +55,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   signupButtonText: {
+    fontFamily: fonts.Medium,
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   loginButton: {
@@ -64,10 +69,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loginButtonText: {
+    fontFamily: fonts.Medium,
     color: '#000',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });
 
-export default Login;
+export default Index;
