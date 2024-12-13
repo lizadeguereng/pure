@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     //  the navigation for the application
-    // listed below are the different pages
+    // listed below are the different pages so far
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false,}}>
         <Stack.Screen name={"Welcome"} component={Index}/>

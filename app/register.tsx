@@ -1,14 +1,54 @@
 import { router } from 'expo-router';
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { ref, push, set } from "firebase/database"; // Firebase Realtime Database functions
+import { db } from "../firebaseConfig"; // Firebase config
 
 const RegisterScreen: React.FC = () => {
+  const [email, setEmail] = useState(''); // email adress property
+  const [name, setName] = useState(''); // name property
+  const [username, setUsername] = useState(''); // username property
+  const [password, setPassword] = useState(''); // password property
+  const [confirmPassword, setConfirmPassword] = useState(''); // confirm password property
+
+  //register event
+  const handleRegister = async () => {
+    if (!email || !name || !username || !password || !confirmPassword) {
+      Alert.alert("Error", "All fields are required."); // if a field is empty notfiy the user
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match."); // if the password does not match notify the user
+      return;
+    }
+
+    try {
+      // Creating a new user reference with a unique key
+      const newUserRef = push(ref(db, "users"));
+      await set(newUserRef, {
+        email,
+        name,
+        username,
+        password,
+      });
+
+      // for testing purposes only - will remove after testing 
+      Alert.alert("Success", "User registered successfully!");
+      // Navigate to the login page after registration
+      router.push("/login");
+    } catch (error) {
+      console.error("Error adding user:", error); // notify user if login failed
+      Alert.alert("Error", "Failed to register user. Please try again.");
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Logo and Welcome Message */}
       <View style={styles.header}>
         <View style={styles.logoContainer}>
-        <Image source={require('../assets/images/PureLogo3.png')} style={{ width: 150, height: 150 }} />
+          <Image source={require('../assets/images/PureLogo3.png')} style={{ width: 150, height: 150 }} />
         </View>
         <Text style={styles.title}>Welcome to Pure!</Text>
       </View>
@@ -16,19 +56,37 @@ const RegisterScreen: React.FC = () => {
       {/* Input Fields */}
       <View style={styles.form}>
         <Text style={styles.label}>Email</Text>
-        <TextInput style={styles.input} placeholder="Enter your email" keyboardType="email-address" />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your email"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
 
         <Text style={styles.label}>Name</Text>
-        <TextInput style={styles.input} placeholder="Enter your name" />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your name"
+          value={name}
+          onChangeText={setName}
+        />
 
         <Text style={styles.label}>Username</Text>
-        <TextInput style={styles.input} placeholder="Choose a username" />
+        <TextInput
+          style={styles.input}
+          placeholder="Choose a username"
+          value={username}
+          onChangeText={setUsername}
+        />
 
         <Text style={styles.label}>Password</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter your password"
           secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
 
         <Text style={styles.label}>Confirm Password</Text>
@@ -36,15 +94,17 @@ const RegisterScreen: React.FC = () => {
           style={styles.input}
           placeholder="Confirm your password"
           secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
         />
       </View>
 
-      {/* Create Account Button */}
-      <TouchableOpacity style={styles.button}>
+      {/* Register user button */}
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Create account</Text>
       </TouchableOpacity>
 
-      {/* Already a Member Link */}
+      {/* Takes user back to login page button */}
       <TouchableOpacity>
         <Text style={styles.footerText} onPress={() => router.push("/login")}>Already a member?</Text>
       </TouchableOpacity>
@@ -52,6 +112,7 @@ const RegisterScreen: React.FC = () => {
   );
 };
 
+// styling for this page
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -64,20 +125,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
+  // logo styling
   logoContainer: {
-    width: 80,
-    height: 80,
-    backgroundColor: '#000',
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginBottom: 10,
   },
-  logo: {
-    color: '#fff',
-    fontSize: 36,
-    fontWeight: 'bold',
-  },
+  // welcome message
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -85,15 +137,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     bottom: -25,
   },
+  // form input containter
   form: {
-    width: '100%',
+    width: '85%',
     marginBottom: 20,
   },
+  // labels for the input fields
   label: {
     fontSize: 16,
     color: '#000',
     marginBottom: 5,
   },
+  // input fields
   input: {
     width: '100%',
     height: 40,
@@ -104,6 +159,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
   },
+  // sumbmit button
   button: {
     width: '60%',
     height: 50,

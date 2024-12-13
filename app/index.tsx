@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
+// this is the welcome page (start up / first page)
 const Index = () => {
   const router = useRouter();
 
@@ -14,7 +15,7 @@ const Index = () => {
         <Text style={styles.tagline}>Purely about podcasts.</Text>
       </View>
 
-      {/* Buttons */}
+      {/* Buttons to direct you to login or register */}
       <TouchableOpacity style={styles.signupButton} onPress={() => router.push('/register')}>
         <Text style={styles.signupButtonText}>Sign up now</Text>
       </TouchableOpacity>
