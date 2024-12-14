@@ -1,4 +1,4 @@
-import { fonts } from '@/constants/Fonts';
+import { fonts } from '../constants/Fonts';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';

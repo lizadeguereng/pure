@@ -32,7 +32,11 @@ yarn-error.*
 # local env files
 .env*.local
 
+echo ".env" >> .gitignore
+
 # typescript
 *.tsbuildinfo
 
 app-example
+
+firebaseConfig.js

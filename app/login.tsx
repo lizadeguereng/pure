@@ -52,8 +52,6 @@ const LoginScreen: React.FC = () => {
           console.log('Matched user:', matchedUser);
           Alert.alert('Login Successful', `Welcome back!`); // display a temporty notifcation - only for testing purposes
           router.push('/home'); // redirect to home
-          console.log('No user matched the provided credentials.'); 
-          Alert.alert('Invalid username or password. Please try again.'); // if no user is found display the alert message
         }
       } else { // if no  matching results
         console.log('No data found in the database.'); 
