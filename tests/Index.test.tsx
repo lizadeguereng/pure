@@ -1,24 +1,24 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import Index from '../app/index'; // path to the Index component
+import Index from '../app/index'; // Ensure the correct path to the Index component
 import { useRouter } from 'expo-router';
 
-// Mock the router
+// Mock the router with TypeScript
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
 }));
 
 describe('Index Component', () => {
-  let mockPush;
+  let mockPush: jest.Mock;
 
   beforeEach(() => {
     // Mock the router's push method
     mockPush = jest.fn();
-    useRouter.mockReturnValue({ push: mockPush });
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
   });
 
   it('renders the logo, tagline, and buttons correctly', () => {
-    const { getByText, getByTestId } = render(<Index />);
+    const { getByText } = render(<Index />);
 
     // Check that the logo and tagline are displayed
     expect(getByText('Purely about podcasts.')).toBeTruthy();

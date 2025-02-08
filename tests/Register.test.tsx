@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import RegisterScreen from '../app/register'; // path to the register component
+import RegisterScreen from '../app/register'; // Ensure the correct import path
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ref, push, set } from 'firebase/database';
@@ -23,12 +23,12 @@ jest.mock('expo-router', () => ({
 jest.spyOn(Alert, 'alert');
 
 describe('RegisterScreen', () => {
-  let mockRouterPush;
+  let mockRouterPush: jest.Mock;
 
   beforeEach(() => {
     // Mock the router push function
     mockRouterPush = jest.fn();
-    useRouter.mockReturnValue({ push: mockRouterPush });
+    (useRouter as jest.Mock).mockReturnValue({ push: mockRouterPush });
   });
 
   it('renders all elements correctly', () => {

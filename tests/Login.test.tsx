@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import LoginScreen from '../app/login'; // path to my component
+import LoginScreen from '../app/login'; // Ensure the correct path to the LoginScreen component
 import { useRouter } from 'expo-router';
 import { Alert } from 'react-native';
 import { db } from '../firebaseConfig'; // Mocked Firebase config
@@ -22,11 +22,11 @@ jest.mock('expo-router', () => ({
 jest.spyOn(Alert, 'alert');
 
 describe('LoginScreen', () => {
-  let mockRouterPush;
+  let mockRouterPush: jest.Mock;
 
   beforeEach(() => {
     mockRouterPush = jest.fn();
-    useRouter.mockReturnValue({ push: mockRouterPush });
+    (useRouter as jest.Mock).mockReturnValue({ push: mockRouterPush });
   });
 
   it('renders all elements correctly', () => {
@@ -63,9 +63,9 @@ describe('LoginScreen', () => {
 
   it('shows success alert when Firebase connection is successful', async () => {
     // Mock Firebase returning a valid snapshot
-    get.mockResolvedValue({
+    (get as jest.Mock).mockResolvedValue({
       exists: () => true,
-      val: () => ({ user1: { username: 'testuser', password: 'password123' } }),
+      val: () => ({ user1: { username: 'root', password: 'root' } }),
     });
 
     const { getByText } = render(<LoginScreen />);
@@ -79,7 +79,7 @@ describe('LoginScreen', () => {
 
   it('shows error alert when Firebase connection fails', async () => {
     // Mock Firebase returning no data
-    get.mockResolvedValue({
+    (get as jest.Mock).mockResolvedValue({
       exists: () => false,
     });
 
@@ -94,18 +94,18 @@ describe('LoginScreen', () => {
 
   it('navigates to the home page on successful login', async () => {
     // Mock Firebase returning valid user data
-    get.mockResolvedValue({
+    (get as jest.Mock).mockResolvedValue({
       exists: () => true,
       val: () => ({
-        user1: { username: 'testuser', password: 'password123' },
+        user1: { username: 'root', password: 'root' },
       }),
     });
 
     const { getByText, getByPlaceholderText } = render(<LoginScreen />);
 
     // Simulate entering username and password
-    fireEvent.changeText(getByPlaceholderText('Enter your username'), 'testuser');
-    fireEvent.changeText(getByPlaceholderText('Enter your password'), 'password123');
+    fireEvent.changeText(getByPlaceholderText('Enter your username'), 'root');
+    fireEvent.changeText(getByPlaceholderText('Enter your password'), 'root');
 
     // Simulate pressing the Sign-in button
     await waitFor(() => fireEvent.press(getByText('Sign in')));
@@ -116,7 +116,7 @@ describe('LoginScreen', () => {
 
   it('shows alert for invalid username or password', async () => {
     // Mock Firebase returning user data without matching credentials
-    get.mockResolvedValue({
+    (get as jest.Mock).mockResolvedValue({
       exists: () => true,
       val: () => ({
         user1: { username: 'wronguser', password: 'wrongpassword' },
@@ -126,13 +126,13 @@ describe('LoginScreen', () => {
     const { getByText, getByPlaceholderText } = render(<LoginScreen />);
 
     // Simulate entering username and password
-    fireEvent.changeText(getByPlaceholderText('Enter your username'), 'testuser');
-    fireEvent.changeText(getByPlaceholderText('Enter your password'), 'password123');
+    fireEvent.changeText(getByPlaceholderText('Enter your username'), 'root');
+    fireEvent.changeText(getByPlaceholderText('Enter your password'), 'root');
 
     // Simulate pressing the Sign-in button
     await waitFor(() => fireEvent.press(getByText('Sign in')));
 
     // Check if alert for invalid credentials is shown
-    expect(Alert.alert).toHaveBeenCalledWith('Invalid username or password. Please try again.');
+    expect(Alert.alert).toHaveBeenCalledWith('Error', 'Invalid username or password. Please try again.');
   });
 });
