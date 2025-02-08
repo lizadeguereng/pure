@@ -40,3 +40,4 @@ echo ".env" >> .gitignore
 app-example
 
 firebaseConfig.js
+firebaseConfig.js

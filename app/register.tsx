@@ -1,10 +1,10 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
-import { ref, push, set } from "firebase/database"; // Firebase Realtime Database functions
-import { db } from "../firebaseConfig"; // Firebase config
+import { ref, push, set } from "firebase/database";
+import { db } from "../firebaseConfig"; 
 
-const RegisterScreen: React.FC = () => {
+const Register: React.FC = () => {
   const [email, setEmail] = useState(''); // email adress property
   const [name, setName] = useState(''); // name property
   const [username, setUsername] = useState(''); // username property
@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
+  // submit button text
   buttonText: {
     color: '#fff',
     fontSize: 16,
@@ -180,4 +181,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen;
+export default Register;

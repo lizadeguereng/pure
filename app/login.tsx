@@ -4,7 +4,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } fro
 import {db} from '../firebaseConfig'; // firebaseconfig file
 import {ref, get, child} from 'firebase/database'; // databse connection
 
-const LoginScreen: React.FC = () => {
+const Login: React.FC = () => {
 
   const [username, setUsername] = useState(''); // username property
   const [password, setPassword] = useState(''); // password property
@@ -80,10 +80,7 @@ const LoginScreen: React.FC = () => {
       {/* Password Input */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your password"
-          secureTextEntry value={password} onChangeText={setPassword}
+        <TextInput style={styles.input} secureTextEntry placeholder="Enter your password" value={password} onChangeText={setPassword}
         />
         <TouchableOpacity>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
@@ -174,4 +171,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default Login;

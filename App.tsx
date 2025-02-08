@@ -5,6 +5,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import Index from "./app/index";
 import Login from "./app/login";
 import Register from "./app/register";
+import Home from './app/home';
+import Search from './app/search';
+import PodcastProfile from './app/podcastprofile';
+import PodcastPlayer from './app/podcastplayer';
 
 
 
@@ -19,6 +23,10 @@ const App = () => {
         <Stack.Screen name={"Welcome"} component={Index}/>
         <Stack.Screen name={"Login"} component={Login}/>
         <Stack.Screen name={"Register"} component={Register}/>
+        <Stack.Screen name={"Home"} component={Home}/>
+        <Stack.Screen name={"Search"} component={Search}/>
+        <Stack.Screen name={"PodcastProfile"} component={PodcastProfile}/>
+        <Stack.Screen name={"PodcastPlayer"} component={PodcastPlayer}/>
       </Stack.Navigator>
     </NavigationContainer>
   )

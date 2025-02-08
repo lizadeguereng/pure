@@ -33,20 +33,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
   },
+  // logo and slogan div
   logoContainer: {
     alignItems: 'center',
     marginBottom: 50,
   },
+  // logo img
   logo: {
     flexShrink: 0
 
   },
+  // pure's tagline
   tagline: {
     fontFamily: fonts.Medium,
     fontSize: 16,
     color: '#888',
     marginTop: 10,
   },
+  // signup button
   signupButton: {
     backgroundColor: '#000',
     paddingVertical: 15,
@@ -55,12 +59,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: 'center',
   },
+  // signup button text
   signupButtonText: {
     fontFamily: fonts.Medium,
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
+  // login button
   loginButton: {
     borderColor: '#000',
     borderWidth: 2,
@@ -69,6 +75,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
   },
+  // login button text
   loginButtonText: {
     fontFamily: fonts.Medium,
     color: '#000',
