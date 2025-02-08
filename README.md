@@ -1,50 +1,16 @@
-# Welcome to your Expo app 👋
+# Welcome to Pure
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An app purley about podcasts.
 
-## Get started
+## Why?
 
-1. Install dependencies
+"Pure" is a groundbreaking podcast mobile application with React Native and Expo, revolutionizing the way we listen to podcasts. With its sleek interface and intuitive features, Pure offers a seamless platform for podcast lovers to tune in and discover a platform with endless choices. Whether you're a pod listener or are just starting, Pure provides invaluable features and design work. Join the conversation and experience the power of Pure.
 
-   ```bash
-   npm install
-   ```
+## Get a fresh take
+As this project is in progress you can view my portfolio write up about it on Behance! Click the link and see Pure for yourself! [Pure Behance Presentation](https://www.behance.net/gallery/197200965/UX-Case-Study-Pure-Podcast-App)
 
-2. Start the app
+## Journey through this process with me
 
-   ```bash
-    npx expo start
-   ```
+As this project is being developed, stay connected and in tuned through my LinkedIn!
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [Linked](https://www.linkedin.com/in/liza-de-guerengomba/): View my post updates and portfolio website!
