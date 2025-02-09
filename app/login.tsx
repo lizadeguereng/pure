@@ -4,6 +4,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } fro
 import {db} from '../firebaseConfig'; // firebaseconfig file
 import {ref, get, child} from 'firebase/database'; // databse connection
 
+// this page is where the user logs in
 const Login: React.FC = () => {
 
   const [username, setUsername] = useState(''); // username property

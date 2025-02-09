@@ -5,8 +5,7 @@ import { useRouter } from "expo-router";
 import { db } from "../firebaseConfig";
 import { ref, get } from "firebase/database";
 
-
-
+// this page is where the user can view diff podcasts
 const Home: React.FC = () => {
 
   const [podcasts, setPodcasts] = useState([]); // podcast array

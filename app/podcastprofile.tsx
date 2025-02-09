@@ -5,6 +5,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { ref, get } from 'firebase/database';
 import { db } from '../firebaseConfig';
 
+// this is where the users can view a podcast profile 
 const PodcastProfile: React.FC = () => {
     const { id, name, imageurl, description, podcaster, profileimgurl } = useLocalSearchParams(); // pulling data from the passing params
     const [podcastepisode, setEpisodes] = useState([]); // podcast episode array

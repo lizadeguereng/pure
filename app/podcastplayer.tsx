@@ -4,6 +4,7 @@ import Slider from "@react-native-community/slider";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
+// this is where the podcast episodes are player
 const PodcastPlayer: React.FC = () => {
   //initilizing properties that will be pulled from db 
   const { name, audioFile, time, imageurl, podcaster, profileimgurl } = useLocalSearchParams();
