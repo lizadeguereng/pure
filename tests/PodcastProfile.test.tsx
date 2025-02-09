@@ -20,7 +20,7 @@ jest.mock('firebase/database', () => ({
 const mockPodcastData = {
     name: 'Amen Podcast',
     imageurl: 'https://i.scdn.co/image/ab6765630000ba8ac695dcc95867a30a033cb985',
-    description: 'A podcast about tech trends.',
+    description: 'Preaching the good news of Jesus Christ and how it applies to everyday life.',
     podcaster: 'Alex & Lokelani Wilson',
     profileimgurl: 'https://yt3.googleusercontent.com/S3PPHdYFvywKgrqvtUTOOPy4qpXdC4P2zEgBTEiWRoVvzBZ0nuZBr1zrwpfvdBzNwSCNjtZTfQ=s900-c-k-c0x00ffffff-no-rj',
 };

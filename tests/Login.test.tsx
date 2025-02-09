@@ -3,8 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import LoginScreen from '../app/login'; // Ensure the correct path to the LoginScreen component
 import { useRouter } from 'expo-router';
 import { Alert } from 'react-native';
-import { db } from '../firebaseConfig'; // Mocked Firebase config
-import { get, ref, child } from 'firebase/database';
+import { get} from 'firebase/database';
 
 // Mock Firebase functions
 jest.mock('firebase/database', () => ({
