@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { ref, push, set } from "firebase/database";
 import { db } from "../firebaseConfig"; 
 
@@ -23,6 +23,19 @@ const Register: React.FC = () => {
       return;
     }
 
+    // email restrictions 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert("Error", "PLease enter a valid email address."); // if the email is invalid notify the user
+      return;
+    }
+
+    // password restrictions
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // at least 8 characters, 1 letter and 1 number
+    if(!passwordRegex.test(password)) {
+      Alert.alert("Error", "Your password is not at least 8 characters long, or does not meet the requirements of one number or special character."); // if the password is invalid notify the user
+      return;}
+
     try {
       // Creating a new user reference with a unique key
       const newUserRef = push(ref(db, "users"));
@@ -44,7 +57,9 @@ const Register: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       {/* Logo and Welcome Message */}
       <View style={styles.header}>
         <View style={styles.logoContainer}>
@@ -108,7 +123,8 @@ const Register: React.FC = () => {
       <TouchableOpacity>
         <Text style={styles.footerText} onPress={() => router.push("/login")}>Already a member?</Text>
       </TouchableOpacity>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -135,7 +151,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
     textAlign: 'center',
-    bottom: -25,
+    bottom: -30,
   },
   // form input containter
   form: {

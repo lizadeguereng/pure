@@ -8,9 +8,14 @@ import { ref, get } from "firebase/database";
 // this page is where the user can view diff podcasts
 const Home: React.FC = () => {
 
+  const [isPlaying, setIsPlaying] = useState(false); // is the podcast playing
   const [podcasts, setPodcasts] = useState([]); // podcast array
   const [loading, setLoading] = useState(true); // is page loading
   const router = useRouter(); // router
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
 
   // fetching all podcasts from database
   useEffect(() => {
@@ -46,7 +51,10 @@ const Home: React.FC = () => {
         imageurl: item.imageurl,
         description: item.description,
         podcaster: item.podcaster,
-        profileimgurl: item.profileimgurl
+        profileimgurl: item.profileimgurl,
+        headerurl: item.headerurl,
+        bio: item.bio,
+        
       },
     })}>
       <Image source={{ uri: item.imageurl }} style={{ width: 110, height: 110, borderRadius: 10, marginRight: 10 }} />
@@ -81,7 +89,7 @@ const Home: React.FC = () => {
         <Text style={styles.username}> Madison!</Text> {/* pulls user's name from db */}
       </Text>
 
-      {/* podcast horizontal slide with its specfic category*/}
+      {/* Podcast horizontal slide with its specific category*/}
       <ScrollView style={styles.horizontalscroll}>
         <PodcastList title="Jump Back In" category="JumpBackIn" />
         <PodcastList title="We Think You'll Like" category="WeThinkYouMayLike" />
@@ -89,7 +97,7 @@ const Home: React.FC = () => {
       </ScrollView>
 
       {/* Playback Controls */}
-      <TouchableOpacity style={styles.playbackContainer}>
+      <TouchableOpacity style={styles.playbackContainer} onPress={() => router.push('/podcastplayer')}>
         <Image
           source={{ uri: "https://i1.sndcdn.com/artworks-ILOJyoq0yf1xI1Jj-EMULfg-t500x500.jpg" }}
           style={styles.albumArt}
@@ -102,11 +110,11 @@ const Home: React.FC = () => {
           </View>
         </View>
         <View style={styles.controls}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/podcastplayer')}>
             <Ionicons style={styles.rewind} name="play-skip-back-outline" size={35} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Ionicons name="pause-circle" size={50} color="black" />
+          <TouchableOpacity onPress={togglePlayPause}>
+            <Ionicons name={isPlaying ? "play-circle" : "pause-circle"} size={50} color="black"/>
           </TouchableOpacity>
           <TouchableOpacity>
             <Ionicons style={styles.fastForward} name="play-skip-forward-outline" size={35} color="black" />
@@ -125,7 +133,7 @@ const Home: React.FC = () => {
           <Ionicons name="search-outline" size={30} color="#D9D9D9" onPress={() => router.push('/search')} />
         </TouchableOpacity>
         <TouchableOpacity>
-          <Ionicons name="person-outline" size={30} color="#D9D9D9" />
+          <Ionicons name="person-outline" size={30} color="#D9D9D9" onPress={() => router.push('/account')} />
         </TouchableOpacity>
       </View>
     </View>

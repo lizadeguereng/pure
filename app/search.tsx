@@ -1,14 +1,63 @@
-import React from "react";
-import { View, Text, StyleSheet, TextInput, FlatList, Image, TouchableOpacity, } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TextInput, FlatList, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { ref, get } from 'firebase/database';
+import { db } from '../firebaseConfig';
 
+// this is where the user can search for a podcast or a podcaster (author)
 const Search: React.FC = () => {
-  // placeholder images
+
+  const [searchText, setSearchText] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  // placeholder images - personal reminder: come back and add a recent search feature that saves the last 2 searches
   const recentSearches = [
-    { name: "Emy Moore", uri: "https://yt3.googleusercontent.com/-ptrqe9imuSXrKEJWuQ6oOEbZNXSIOI9nHUHKTZ3Neb1-nO2B1vq5ogtTJ9pTdCnUhiHEmlx3Q=s900-c-k-c0x00ffffff-no-rj" },
-    { name: "Hayley Mulenda", uri: "https://londonspeakerbureau.com/wp-content/uploads/2019/04/Hayley-Mulenda-keynote-speaker-1.jpg" },
+    { name: "Saved Not Soft", uri: "https://i.scdn.co/image/ab6765630000ba8a2141a1b9f6d3c4c9aeb27926" },
+    { name: "Building You With Haley Mulenda", uri: "https://i.scdn.co/image/ab6765630000ba8a708d121b4808c5e0fb82ae4f" },
   ];
+
+  // searches the database for a podcast or a podcaster
+  useEffect(() => {
+    const searchDatabase = async () => {
+      if (!searchText.trim()) {
+        setSearchResults([]);
+        return;
+      }
+
+      // fetch podcasts from the database
+      const snapshot = await get(ref(db, "podcasts"));
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const results = [];
+
+        Object.keys(data).forEach((key) => {
+          const item = data[key];
+
+          // Match by podcast name
+          if (item.name.toLowerCase().includes(searchText.toLowerCase())) {
+            results.push({
+              id: key,
+              name: item.name,
+              uri: item.imageurl,
+              type: "podcast",
+            });
+          }
+
+          // Match by podcaster name
+          if (item.podcaster && item.podcaster.toLowerCase().includes(searchText.toLowerCase())) {
+            results.push({
+              id: key,
+              name: item.podcaster,
+              uri: item.imageurl,
+              type: "podcaster",
+            });
+          }
+        });
+        setSearchResults(results);
+      }
+    };
+    searchDatabase();
+  }, [searchText]);
 
   return (
     <View style={styles.container}>
@@ -18,23 +67,37 @@ const Search: React.FC = () => {
           placeholder="The gears are turning!"
           placeholderTextColor="#888"
           style={styles.input}
+          value={searchText}
+          onChangeText={setSearchText}
         />
         <Ionicons name="search" size={24} color="black" style={styles.searchIcon} />
       </View>
 
       {/* Recently Searched */}
-      <Text style={styles.sectionTitle}>Recently searched</Text>
+      <Text style={styles.sectionTitle}>{searchText.trim() ? "Search Results" : "Recently Searched"}</Text>
+      {
+        searchText.trim() && searchResults.length === 0 && (
+          <Text>No results found.</Text>
+        )
+      }
+      {/* List of Recently Searched or Search Results */}
       <FlatList
-        data={recentSearches}
+        data={searchText.trim() ? searchResults : recentSearches}
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={styles.recentSearchContainer}
         renderItem={({ item }) => (
-          <View style={styles.recentSearchItem}>
-            <Image source={{ uri: item.uri }} style={styles.recentSearchImage} />
-            <Text style={styles.recentSearchName}>{item.name}</Text>
-          </View>
+          <TouchableOpacity onPress={() => {
+            if (item.type === "podcast") {
+              router.push({ pathname: "/podcastprofile", params: { id: item.id } });
+            } // personal reminder: add podcastprofile
+          }}>
+            <View style={styles.recentSearchItem}>
+              <Image source={{ uri: item.uri }} style={item.type === "podcaster" ? styles.circleImage : styles.squareImage} />
+              <Text style={styles.recentSearchName} numberOfLines={2} ellipsizeMode="tail">{item.name}</Text>
+            </View>
+          </TouchableOpacity>
         )}
       />
 
@@ -75,7 +138,7 @@ const Search: React.FC = () => {
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
-          <Ionicons name="person-outline" size={30} color="#D9D9D9" />
+          <Ionicons name="person-outline" size={30} color="#D9D9D9" onPress={() => router.push("/account")} />
         </TouchableOpacity>
       </View>
     </View>
@@ -120,22 +183,42 @@ const styles = StyleSheet.create({
   /*recently searched container styling*/
   recentSearchContainer: {
     paddingBottom: 20,
+    paddingRight: 100,
   },
+  // recent searched item
   recentSearchItem: {
-    alignItems: "center",
-    marginRight: 20,
+    flexDirection: "column",
+    marginBottom: 15,
+    paddingRight: 10,
   },
   // recent searched image
   recentSearchImage: {
     width: 90,
     height: 90,
-    borderRadius: 40,
+    borderRadius: 13,
     marginBottom: 5,
   },
   // name under the image
   recentSearchName: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#000",
+    textAlign: "center",
+    flexWrap: "wrap",
+    width: 95, // restricts width so text wraps under image
+    lineHeight: 16,
+  },
+  circleImage: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    marginBottom: 5,
+  },
+  // square image for podcasts
+  squareImage: {
+    width: 90,
+    height: 90,
+    borderRadius: 10,
+    marginBottom: 5,
   },
   // playback container styling (above the navigation bar
   playbackContainer: {

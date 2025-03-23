@@ -7,7 +7,7 @@ import { db } from '../firebaseConfig';
 
 // this is where the users can view a podcast profile 
 const PodcastProfile: React.FC = () => {
-    const { id, name, imageurl, description, podcaster, profileimgurl } = useLocalSearchParams(); // pulling data from the passing params
+    const { id, name, imageurl, description, bio, podcaster, profileimgurl, headerurl } = useLocalSearchParams(); // pulling data from the passing params
     const [podcastepisode, setEpisodes] = useState([]); // podcast episode array
     const [loading, setLoading] = useState(true); // if page is loading the information
 
@@ -40,18 +40,11 @@ const PodcastProfile: React.FC = () => {
         fetchEpisodes();
     }, [id]);
 
-    // if (loading) {
-    //     return (
-    //         <View style={styles.container}>
-    //             <ActivityIndicator size="large" color="#0000ff" />
-    //         </View>
-    //     );
-    // }
     return (
         <View style={styles.container}>
             {/* Search Bar */}
             <View style={styles.searchBar}>
-                <Ionicons style={styles.backbutton} name="chevron-back-outline" size={30} color="black" onPress={() => { router.push('/home'); }} />
+                <Ionicons style={styles.backbutton} name="chevron-back-outline" size={30} color="black" onPress={() => { router.back(); }} />
                 <TextInput style={styles.searchInput} placeholder="Search this podcast" />
                 <Ionicons style={styles.searchbutton} name="search" size={24} color="black" />
             </View>
@@ -61,10 +54,26 @@ const PodcastProfile: React.FC = () => {
                 <Image source={{ uri: imageurl }} style={styles.coverImage} />
                 <View style={styles.headerText}>
                     <Text style={styles.title}>{name}</Text>
-                    <View style={styles.hostContainer}>
+                    <TouchableOpacity
+                        style={styles.hostContainer}
+                        onPress={() =>
+                            router.push({
+                                pathname: '/podcasterprofile',
+                                params: {
+                                    id: id, // pass the podcast id to fetch episodes
+                                    podcaster,
+                                    profileimgurl,
+                                    headerurl: headerurl,
+                                    imageurl: imageurl,
+                                    bio: bio,
+                                    episodes: JSON.stringify(podcastepisode),
+                                }
+                            })
+                        }
+                    >
                         <Image source={{ uri: profileimgurl }} style={styles.hostImage} />
                         <Text style={styles.hostName}>{podcaster}</Text>
-                    </View>
+                    </TouchableOpacity>
                 </View>
             </View>
 
@@ -87,13 +96,13 @@ const PodcastProfile: React.FC = () => {
                                 params: {
                                     id: item.id,
                                     name: item.name,
-                                    audioFile: item.audioFile, // URL for audio
+                                    audioFile: item.audioFile,
                                     description: item.description,
                                     date: item.date,
                                     time: item.time,
-                                    imageurl: item.imageurl,
+                                    imageurl: imageurl,
                                     profileimgurl: item.profileimgurl,
-                                    podcaster: item.podcaster,
+                                    podcaster: podcaster,
                                 },
                             })
                         }
@@ -151,6 +160,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         fontSize: 16,
         color: "#000",
+        left: -22,
     },
     header: {
         flexDirection: "row",
@@ -163,6 +173,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginRight: 15
     },
+    // header text container
     headerText: {
         flex: 1,
         justifyContent: "center"

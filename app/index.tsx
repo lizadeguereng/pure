@@ -4,7 +4,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 // this is the welcome page (start up / first page)
-const Index = () => {
+const Welcome: React.FC = () => {
   const router = useRouter();
 
   return (
@@ -84,4 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Index;
+export default Welcome;

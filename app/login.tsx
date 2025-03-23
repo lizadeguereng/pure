@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, {useState} from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import {db} from '../firebaseConfig'; // firebaseconfig file
 import {ref, get, child} from 'firebase/database'; // databse connection
 
@@ -14,10 +14,10 @@ const Login: React.FC = () => {
   const testFirebaseConnection = async () => {
     try {
       const dbRef = ref(db);
-      const snapshot = await get(child(dbRef, 'users'));
+      const snapshot = await get(child(dbRef, 'users')); // get the table called users
   
       if (snapshot.exists()) {
-        console.log('Data retrieved:', snapshot.val());
+        console.log('Data retrieved:', snapshot.val()); // pulls all the users inside the table
         Alert.alert('Firebase Test', 'Successfully connected to Firebase!');
       } else {
         console.log('No data available');
@@ -32,7 +32,7 @@ const Login: React.FC = () => {
   // login ever
   const handleLogin = async () => {
     try {
-      if (!username || !password) {
+      if (!username || !password) { 
         Alert.alert('Error', 'Please enter both username and password.'); // missing fields alert
         return;
       }
@@ -43,7 +43,7 @@ const Login: React.FC = () => {
   
       if (snapshot.exists()) { // if database is not empty
         const users = snapshot.val();
-        console.log('Data retrieved successfully:', users); // pulls all the users inside the table
+        // console.log('Data retrieved successfully:', users); // pulls all the users inside the table
   
         const matchedUser = Object.values(users).find(
           (user: any) => user.username === username && user.password === password // find the user from the input fields in the database (compare for a match)
@@ -51,7 +51,7 @@ const Login: React.FC = () => {
   
         if (matchedUser) { // if the user is found
           console.log('Matched user:', matchedUser);
-          Alert.alert('Login Successful', `Welcome back!`); // display a temporty notifcation - only for testing purposes
+         // Alert.alert('Login Successful', `Welcome back!`); // display a temporty notifcation - only for testing purposes
           router.push('/home'); // redirect to home
         }
       } else { // if no  matching results
@@ -66,7 +66,8 @@ const Login: React.FC = () => {
   
 
   return (
-    <View style={styles.container}>
+     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       {/* Logo */}
       <View style={styles.logoContainer}>
       <Image source={require('../assets/images/PureLogo2.png')} style={{ width: 131, height: 195 }} />
@@ -97,7 +98,8 @@ const Login: React.FC = () => {
       <TouchableOpacity>
         <Text style={styles.newHereText} onPress={() => {router.push('/register')}}>New Here?</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -3,22 +3,37 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Slider from "@react-native-community/slider";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import YoutubeIframe from "react-native-youtube-iframe";
+import { useEffect } from "react";
+import {useRef} from 'react';
 
 // this is where the podcast episodes are player
 const PodcastPlayer: React.FC = () => {
   //initilizing properties that will be pulled from db 
   const { name, audioFile, time, imageurl, podcaster, profileimgurl } = useLocalSearchParams();
   const router = useRouter(); // router
+  const playerRef = useRef(null); // reference to the YoutubeIframe player state for the audio player
 
   // this will be replaced with the audioFile time
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(50); //  current time in seconds
-  const [duration] = useState(1239); //  total duration in seconds (20:39)
+  const [currentTime, setCurrentTime] = useState(0); //  current time in seconds
+  const [duration, setDuration] = useState(0); //  total duration in seconds
 
+  
   // function to toggle play and pause
   const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
+    setIsPlaying((prev) => !prev);
   };
+
+  // function to extract YouTube video ID from URL
+  const getYouTubeVideoId = (url) => {
+    const match = url.match(/(?:\?v=|\/embed\/|\.be\/)([a-zA-Z0-9_-]{11})/);
+    return match ? match[1] : null;
+  };
+  
+  // Extract YouTube video ID from the audioFile URL
+  const videoId = getYouTubeVideoId(audioFile);
+  
 
   // function to format time
   const formatTime = (time) => {
@@ -27,23 +42,67 @@ const PodcastPlayer: React.FC = () => {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
+  // function to convert time string to seconds
+  const convertTimeToSeconds = (timeString) => {
+    const parts = timeString.split(":");
+    const minutes = parseInt(parts[0], 10);
+    const seconds = parseInt(parts[1], 10);
+    return (minutes * 60) + seconds;
+  };
+
+  // set the duration of the audio file in seconds
+  useEffect(() => {
+    if (time) {
+      const totalSeconds = convertTimeToSeconds(time);
+      setDuration(totalSeconds);
+    }
+  }, [time]);
+  
+  // update current time every second when playing
+  useEffect(() => {
+    let interval;
+    if (isPlaying && playerRef.current) {
+      interval = setInterval(async () => {
+        const time = await playerRef.current?.getCurrentTime();
+        if (typeof time === "number") {
+          setCurrentTime(Math.floor(time));
+        }
+      }, 1000); // poll every second
+    }
+  
+    return () => clearInterval(interval); // clear interval on pause or unmount
+  }, [isPlaying]);
+
   return (
     <View style={styles.container}>
       {/* Back Button */}
       <Ionicons
         name="chevron-back-outline"
-        size={30}
+        size={35}
         color="black"
         style={styles.backButton}
         onPress={() => router.back()}
       />
+
+{videoId && (
+    <YoutubeIframe
+    ref={playerRef}
+      height={0} // Make it hidden for "audio-only" style
+      width={0}
+      play={isPlaying}
+      videoId={videoId}
+      onChangeState={(state) => {
+        if (state === "ended") setIsPlaying(false);
+      }}
+    />
+  )}
 
       {/* Podcast Image */}
       <Image source={{ uri: imageurl }} style={styles.podcastImage} />
 
       {/* Podcast Title */}
       <Text style={styles.episodeTitle}>{name}</Text>
-      <Text style={styles.podcasterName}>by {podcaster}</Text>
+      <Text style={styles.podcasterName}>{podcaster}</Text>
 
 
       {/* Slider */}
@@ -54,6 +113,10 @@ const PodcastPlayer: React.FC = () => {
           maximumValue={duration}
           value={currentTime}
           onValueChange={(value) => setCurrentTime(value)}
+          onSlidingComplete={(value) => {
+            setCurrentTime(value);
+            playerRef.current?.seekTo(value, true);
+          }}
           minimumTrackTintColor="#000"
           maximumTrackTintColor="#ccc"
           thumbTintColor="#000"
@@ -70,11 +133,7 @@ const PodcastPlayer: React.FC = () => {
         <Ionicons name="shuffle" size={20} color="black" />
         <Ionicons name="play-skip-back-outline" size={40} color="black" />
         <TouchableOpacity onPress={togglePlayPause}>
-          <Ionicons
-            name={isPlaying ? "pause-circle" : "play-circle"}
-            size={60}
-            color="black"
-          />
+          <Ionicons name={isPlaying ? "pause-circle" : "play-circle"} size={60} color="black"/>
           {/* Skip and Repeat */}
         </TouchableOpacity>
         <Ionicons name="play-skip-forward-outline" size={40} color="black" />
@@ -97,6 +156,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -20,
     left: 25,
+    transform: [{ rotate: "270deg" }],
   },
   // podcast image
   podcastImage: {
@@ -150,7 +210,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     left: -20
   },
-  // podcaster profile image - out of scope
+  // podcaster profile image
   podcasterImage: {
     width: 50,
     height: 50,
