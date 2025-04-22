@@ -1,4 +1,3 @@
-![Rectangle 4](https://github.com/user-attachments/assets/c923dad4-040c-4232-b404-d35927030bcc)
 # Pure: An app purley for podcasts
 
 Pure is a mobile podcast app built with Figma, React Native, Expo Go, and Firebase. This app revolutionizes the way we listen to podcasts by offering a sleek, focused, and intuitive user experience. Whether you're an avid listener or new to podcasts, Pure is designed to provide a distraction-free space — just podcasts, no noise.
@@ -67,4 +66,4 @@ Popular platforms like Spotify and YouTube cater to broad media needs. But this 
 No videos. No music. Just podcasts and you.
 
 # See the [UX Case Study](https://www.behance.net/gallery/224183091/Pure-Software-Development-Capstone) for more.
-![image](https://github.com/user-attachments/assets/5915433f-df87-4ab4-9697-7a1d1eb7ef59)
+![Rectangle 4](https://github.com/user-attachments/assets/c923dad4-040c-4232-b404-d35927030bcc)
