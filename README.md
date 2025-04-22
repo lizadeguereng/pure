@@ -13,11 +13,11 @@ The main objective of this project was to extend the UI/UX development workflow 
 # Tech Stack & Tools
 
 ## Tool / Tech	Purpose
-React Native v18.2.0	Ensures a clean, native mobile experience similar to Instagram or Pinterest
-Expo Go v51	Allowed iOS development from a Windows machine using live device previews
-Firebase v13.24.2	Real-time cloud database for seamless backend integration
-Figma	Created all UI wireframes and design prototypes
-Adobe Illustrator & Photoshop	Custom logo and branding design
+- React Native (v18.2.0)	Ensures a clean, native mobile experience similar to Instagram or Pinterest
+ - Expo Go (v51):	Allowed iOS development from a Windows machine using live device previews
+ - Firebase (v13.24.2):	Real-time cloud database for seamless backend integration
+ - Figma	Created all UI wireframes and design prototypes
+ - Adobe Illustrator & Photoshop	Custom logo and branding design
 # Key Features
 ## Account Management
 - Account Enrollment: Sign up with name, email, username, and password
