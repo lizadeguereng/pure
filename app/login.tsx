@@ -10,24 +10,24 @@ const Login: React.FC = () => {
   const [username, setUsername] = useState(''); // username property
   const [password, setPassword] = useState(''); // password property
 
-  // this method is purley for testing purposes - will be removed during final production
-  const testFirebaseConnection = async () => {
-    try {
-      const dbRef = ref(db);
-      const snapshot = await get(child(dbRef, 'users')); // get the table called users
+  // // this method is purley for testing purposes - will be removed during final production
+  // const testFirebaseConnection = async () => {
+  //   try {
+  //     const dbRef = ref(db);
+  //     const snapshot = await get(child(dbRef, 'users')); // get the table called users
   
-      if (snapshot.exists()) {
-        console.log('Data retrieved:', snapshot.val()); // pulls all the users inside the table
-        Alert.alert('Firebase Test', 'Successfully connected to Firebase!');
-      } else {
-        console.log('No data available');
-        Alert.alert('Firebase Test', 'No data found in the database.');
-      }
-    } catch (error) {
-      console.error('Error testing Firebase:', error);
-      Alert.alert('Firebase Test Failed');
-    }
-  };
+  //     if (snapshot.exists()) {
+  //       console.log('Data retrieved:', snapshot.val()); // pulls all the users inside the table
+  //       Alert.alert('Firebase Test', 'Successfully connected to Firebase!');
+  //     } else {
+  //       console.log('No data available');
+  //       Alert.alert('Firebase Test', 'No data found in the database.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error testing Firebase:', error);
+  //     Alert.alert('Firebase Test Failed');
+  //   }
+  // };
 
   // login ever
   const handleLogin = async () => {
@@ -76,13 +76,13 @@ const Login: React.FC = () => {
       {/* Username Input */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Username</Text>
-        <TextInput style={styles.input} placeholder="Enter your username" value={username} onChangeText={setUsername}/>
+        <TextInput style={styles.input} value={username} onChangeText={setUsername}/>
       </View>
 
       {/* Password Input */}
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Password</Text>
-        <TextInput style={styles.input} secureTextEntry placeholder="Enter your password" value={password} onChangeText={setPassword}
+        <TextInput style={styles.input} secureTextEntry value={password} onChangeText={setPassword}
         />
         <TouchableOpacity>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>

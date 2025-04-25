@@ -7,7 +7,7 @@ import { db } from '../firebaseConfig';
 
 // this is where the users can view a podcast profile 
 const PodcastProfile: React.FC = () => {
-    const { id, name, imageurl, description, bio, podcaster, profileimgurl, headerurl } = useLocalSearchParams(); // pulling data from the passing params
+    const { id, name, imageurl, description, bio, podcaster, profileimgurl, headerurl, index } = useLocalSearchParams(); // pulling data from the passing params
     const [podcastepisode, setEpisodes] = useState([]); // podcast episode array
     const [loading, setLoading] = useState(true); // if page is loading the information
 
@@ -39,6 +39,7 @@ const PodcastProfile: React.FC = () => {
         // return the episodes
         fetchEpisodes();
     }, [id]);
+      
 
     return (
         <View style={styles.container}>
@@ -66,8 +67,7 @@ const PodcastProfile: React.FC = () => {
                                     headerurl: headerurl,
                                     imageurl: imageurl,
                                     bio: bio,
-                                    episodes: JSON.stringify(podcastepisode),
-                                }
+                                    episodes: JSON.stringify(podcastepisode),                                }
                             })
                         }
                     >
@@ -103,6 +103,9 @@ const PodcastProfile: React.FC = () => {
                                     imageurl: imageurl,
                                     profileimgurl: item.profileimgurl,
                                     podcaster: podcaster,
+                                    index: podcastepisode.findIndex((ep) => ep.id === item.id).toString(),
+                                    episodes: JSON.stringify(podcastepisode),
+
                                 },
                             })
                         }

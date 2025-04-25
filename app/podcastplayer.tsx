@@ -10,7 +10,11 @@ import {useRef} from 'react';
 // this is where the podcast episodes are player
 const PodcastPlayer: React.FC = () => {
   //initilizing properties that will be pulled from db 
-  const { name, audioFile, time, imageurl, podcaster, profileimgurl } = useLocalSearchParams();
+  const { name, audioFile, time, imageurl, podcaster, profileimgurl, index, episodes } = useLocalSearchParams();
+  const episodeIndex = parseInt(Array.isArray(index) ? index[0] : index);
+  const episodeList = typeof episodes === "string" ? JSON.parse(episodes) : [];
+  const [currentIndex, setCurrentIndex] = useState(episodeIndex); // adding a state to manage the current episode index
+
   const router = useRouter(); // router
   const playerRef = useRef(null); // reference to the YoutubeIframe player state for the audio player
 
@@ -19,6 +23,11 @@ const PodcastPlayer: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(0); //  current time in seconds
   const [duration, setDuration] = useState(0); //  total duration in seconds
 
+  const [isShuffled, setIsShuffled] = useState(false); // set shuffle mode
+  const [shuffledList, setShuffledList] = useState([]);
+
+  const [isRepeat, setIsRepeat] = useState(false); // set repeat
+  
   
   // function to toggle play and pause
   const togglePlayPause = () => {
@@ -35,20 +44,39 @@ const PodcastPlayer: React.FC = () => {
   const videoId = getYouTubeVideoId(audioFile);
   
 
-  // function to format time
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
+ // Function to format a time in seconds to "H:MM:SS" if hours exist, otherwise "MM:SS"
+const formatTime = (time) => {
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = Math.floor(time % 60);
 
-  // function to convert time string to seconds
-  const convertTimeToSeconds = (timeString) => {
-    const parts = timeString.split(":");
-    const minutes = parseInt(parts[0], 10);
-    const seconds = parseInt(parts[1], 10);
-    return (minutes * 60) + seconds;
-  };
+  // Ensure minutes and seconds always have two digits
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+  const formattedSeconds = seconds.toString().padStart(2, "0");
+
+  return hours > 0 
+    ? `${hours}:${formattedMinutes}:${formattedSeconds}`
+    : `${formattedMinutes}:${formattedSeconds}`;
+};
+
+// Function to convert a time string to seconds
+// Expects a string in "HH:MM:SS" or "MM:SS" format.
+const convertTimeToSeconds = (timeString) => {
+  const parts = timeString.split(":").map(Number);
+
+  if (parts.length === 3) {
+    // Format is HH:MM:SS
+    const [hours, minutes, seconds] = parts;
+    return hours * 3600 + minutes * 60 + seconds;
+  } else if (parts.length === 2) {
+    // Format is MM:SS
+    const [minutes, seconds] = parts;
+    return minutes * 60 + seconds;
+  } else {
+    throw new Error("Invalid time format. Expected MM:SS or HH:MM:SS");
+  }
+};
+
 
   // set the duration of the audio file in seconds
   useEffect(() => {
@@ -73,6 +101,71 @@ const PodcastPlayer: React.FC = () => {
     return () => clearInterval(interval); // clear interval on pause or unmount
   }, [isPlaying]);
 
+  // update the current episode when the index changes
+  useEffect(() => {
+    const activeList = isShuffled ? shuffledList : episodeList;
+  if (activeList[currentIndex]) {
+    const ep = activeList[currentIndex];
+    setCurrentTime(0);
+    setIsPlaying(false);
+  
+      router.setParams({
+        name: ep.name,
+        audioFile: ep.audioFile,
+        time: ep.time,
+        imageurl: imageurl,
+        podcaster: podcaster,
+        profileimgurl: ep.profileimgurl,
+      });
+    }
+  }, [currentIndex, isShuffled]);
+
+  // get the current queue based on shuffle mode
+  const queue = isShuffled ? shuffledList : episodeList;
+
+  // skip to the next episode in the queue
+  const skipForward = () => {
+  if (currentIndex < queue.length - 1) {
+    setCurrentIndex(currentIndex + 1);
+  }
+};
+// go back to the previous episode in the queue
+const skipBack = () => {
+  if (currentIndex > 0) {
+    setCurrentIndex(currentIndex - 1);
+  }
+};
+// auto play the next episode when the current episode changes
+  useEffect(() => {
+    if (currentIndex !== episodeIndex) {
+      setIsPlaying(true);
+    }
+  }, [currentIndex]);
+
+  // shuffle mode
+  const toggleShuffle = () => {
+    if (!isShuffled) {
+      const shuffled = [...episodeList];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      setShuffledList(shuffled);
+      setCurrentIndex(0); // restart from the beginning of the shuffled list
+    }
+    setIsShuffled(!isShuffled);
+  };
+  
+  // repeat mode
+  const toggleRepeat = () => {
+    if(!isRepeat){
+      setCurrentIndex(0); // restart from the beginning of the list 
+      
+
+    }
+    setIsRepeat((prev) => !prev);
+  }
+  
   return (
     <View style={styles.container}>
       {/* Back Button */}
@@ -87,12 +180,22 @@ const PodcastPlayer: React.FC = () => {
 {videoId && (
     <YoutubeIframe
     ref={playerRef}
-      height={0} // Make it hidden for "audio-only" style
+      height={0}
       width={0}
       play={isPlaying}
       videoId={videoId}
       onChangeState={(state) => {
-        if (state === "ended") setIsPlaying(false);
+        if (state === "ended") {
+          if (isRepeat) {
+            // repeat same episode
+            setCurrentTime(0);
+            playerRef.current?.seekTo(0, true); // restart the video
+            setIsPlaying(true);
+          } else {
+            setIsPlaying(false);
+            skipForward(); //  play next episode if not repeating
+          }
+        }
       }}
     />
   )}
@@ -130,14 +233,22 @@ const PodcastPlayer: React.FC = () => {
 
       {/* Playback Controls */}
       <View style={styles.controls}>
-        <Ionicons name="shuffle" size={20} color="black" />
+        <TouchableOpacity onPress={toggleShuffle}>
+        <Ionicons name="shuffle" size={26} color={isShuffled ? "#ccc" : "black"} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={skipBack}>
         <Ionicons name="play-skip-back-outline" size={40} color="black" />
+        </TouchableOpacity>
         <TouchableOpacity onPress={togglePlayPause}>
           <Ionicons name={isPlaying ? "pause-circle" : "play-circle"} size={60} color="black"/>
           {/* Skip and Repeat */}
         </TouchableOpacity>
+        <TouchableOpacity onPress={skipForward}>
         <Ionicons name="play-skip-forward-outline" size={40} color="black" />
-        <Ionicons name="repeat" size={20} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={toggleRepeat}>
+        <Ionicons name="repeat" size={26} color={isRepeat ? "#ccc" : "black"} />
+        </TouchableOpacity>
       </View>
     </View>
   );

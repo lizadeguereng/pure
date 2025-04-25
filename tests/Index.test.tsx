@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import Index from '../app'; // Ensure the correct path to the Index component
+import Index from '../app/index'; // Ensure the correct path to the Index component
 import { useRouter } from 'expo-router';
 
 // Mock the router with TypeScript

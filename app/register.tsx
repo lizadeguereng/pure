@@ -26,15 +26,15 @@ const Register: React.FC = () => {
     // email restrictions 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      Alert.alert("Error", "PLease enter a valid email address."); // if the email is invalid notify the user
+      Alert.alert("Error", "Please enter a valid email address."); // if the email is invalid notify the user
       return;
     }
 
     // password restrictions
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // at least 8 characters, 1 letter and 1 number
-    if(!passwordRegex.test(password)) {
-      Alert.alert("Error", "Your password is not at least 8 characters long, or does not meet the requirements of one number or special character."); // if the password is invalid notify the user
-      return;}
+    // if(!passwordRegex.test(password)) {
+    //   Alert.alert("Error", "Your password is not at least 8 characters long, or does not meet the requirements of one number or special character."); // if the password is invalid notify the user
+    //   return;}
 
     try {
       // Creating a new user reference with a unique key

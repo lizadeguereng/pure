@@ -2,11 +2,19 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, FlatList, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { db } from "../firebaseConfig";
-import { ref, get } from "firebase/database";
+import { db, auth } from "../firebaseConfig";
+import { ref, get} from "firebase/database";
 
 // this page is where the user can view diff podcasts
 const Home: React.FC = () => {
+
+  // user data
+    const [userData, setUserData] = useState({
+      name: "", // user's name
+      username: "", // user's username
+      email: "", // user's email
+      profileimgurl: "", // user's profile image
+    })
 
   const [isPlaying, setIsPlaying] = useState(false); // is the podcast playing
   const [podcasts, setPodcasts] = useState([]); // podcast array
@@ -16,6 +24,39 @@ const Home: React.FC = () => {
   const togglePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
+
+    // fetch user data from the database
+    useEffect(() => {
+      const fetchUserData = async () => {
+        console.log("Fetching user data...");
+    
+        try {
+          const user = auth.currentUser;
+          console.log("Current user:", user);
+    
+          if (user) {
+            const path = `users/${user.uid}`;
+            console.log(`Getting data from: ${path}`);
+    
+            const snapshot = await get(ref(db, path));
+            
+            if (snapshot.exists()) {
+              const data = snapshot.val();
+              console.log("Data retrieved from Firebase:", data);
+              setUserData(data);
+            } else {
+              console.warn("No user data found in Firebase.");
+            }
+          } else {
+            console.warn("No authenticated user found.");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+    
+      fetchUserData();
+    }, []);
 
   // fetching all podcasts from database
   useEffect(() => {
@@ -86,7 +127,7 @@ const Home: React.FC = () => {
       {/* Header */}
       <Text style={styles.greeting}>
         Good Afternoon,
-        <Text style={styles.username}> Madison!</Text> {/* pulls user's name from db */}
+        <Text style={styles.username}>{userData.name}</Text> {/* pulls user's name from db */}
       </Text>
 
       {/* Podcast horizontal slide with its specific category*/}
@@ -153,7 +194,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000",
     marginBottom: 20,
-    fontFamily: "Georgia", // personal reminder: remove for coolvectiva font
+    fontFamily: "Georgia", 
   },
   username: {
     fontWeight: "bold",

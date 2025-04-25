@@ -20,20 +20,33 @@ const Account: React.FC = () => {
   // fetch user data from the database
   useEffect(() => {
     const fetchUserData = async () => {
+      console.log("Fetching user data...");
+  
       try {
         const user = auth.currentUser;
-
+        console.log("Current user:", user);
+  
         if (user) {
-          const snapshot = await get(ref(db, `users/${user.uid}`));
+          const path = `users/${user.uid}`;
+          console.log(`Getting data from: ${path}`);
+  
+          const snapshot = await get(ref(db, path));
+          
           if (snapshot.exists()) {
-            setUserData(snapshot.val());
+            const data = snapshot.val();
+            console.log("Data retrieved from Firebase:", data);
+            setUserData(data);
+          } else {
+            console.warn("No user data found in Firebase.");
           }
+        } else {
+          console.warn("No authenticated user found.");
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-
+  
     fetchUserData();
   }, []);
 
@@ -42,7 +55,8 @@ const Account: React.FC = () => {
       {/* Profile Section */}
       <View style={styles.profileContainer}>
         <Image
-          source={{ uri: userData.profileimgurl || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg" }} // Replace with user's image URL
+        // if the user has a profile picture use theirs if not revernt to this img
+          source={{ uri: userData.profileimgurl || "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg" }} 
           style={styles.profileImage}
         />
         <Text style={styles.name}>{userData.name}</Text>
@@ -144,7 +158,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     top: -70,
     left: 115,
-    fontFamily: "Georgia", // personal reminder: remove for coolvectiva font
+    fontFamily: "Georgia",
   },
   // username styling
   username: {

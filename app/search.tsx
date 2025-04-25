@@ -10,10 +10,10 @@ const Search: React.FC = () => {
 
   const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  // placeholder images - personal reminder: come back and add a recent search feature that saves the last 2 searches
+  
+  // recent searches
   const recentSearches = [
-    { name: "Saved Not Soft", uri: "https://i.scdn.co/image/ab6765630000ba8a2141a1b9f6d3c4c9aeb27926" },
-    { name: "Building You With Haley Mulenda", uri: "https://i.scdn.co/image/ab6765630000ba8a708d121b4808c5e0fb82ae4f" },
+    { name: "", uri: "" },
   ];
 
   // searches the database for a podcast or a podcaster
@@ -39,6 +39,9 @@ const Search: React.FC = () => {
               id: key,
               name: item.name,
               uri: item.imageurl,
+              podcaster: item.podcaster,
+              profileimgurl: item.profileimgurl,
+              description: item.description,
               type: "podcast",
             });
           }
@@ -48,7 +51,10 @@ const Search: React.FC = () => {
             results.push({
               id: key,
               name: item.podcaster,
-              uri: item.imageurl,
+              uri: item.profileimgurl,
+              imageurl: item.imageurl,
+              headerurl: item.headerurl,
+              bio: item.bio,
               type: "podcaster",
             });
           }
@@ -90,8 +96,25 @@ const Search: React.FC = () => {
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => {
             if (item.type === "podcast") {
-              router.push({ pathname: "/podcastprofile", params: { id: item.id } });
-            } // personal reminder: add podcastprofile
+              router.push({ pathname: "/podcastprofile", params: {
+                 id: item.id,
+                 imageurl: item.uri,
+                 name: item.name,
+                 podcaster: item.podcaster,
+                 profileimgurl: item.profileimgurl,
+                  description: item.description,
+                } });
+            } 
+            else {
+              router.push({ pathname: "/podcasterprofile", params: {
+                id: item.id,
+                podcaster: item.name,
+                profileimgurl: item.uri,
+                imageurl: item.imageurl,
+                headerurl: item.headerurl,
+                bio: item.bio,
+              } });
+            }
           }}>
             <View style={styles.recentSearchItem}>
               <Image source={{ uri: item.uri }} style={item.type === "podcaster" ? styles.circleImage : styles.squareImage} />

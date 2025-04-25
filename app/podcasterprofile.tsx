@@ -13,34 +13,44 @@ const PodcasterProfile: React.FC = () => {
   const [loading, setLoading] = useState(true); // if page is loading the information
   const [podcastepisode, setEpisodes] = useState([]); // podcast episode array
 
-      useEffect(() => {
-          if (!id) return;
-          // fetch podcast episodes from the database
-          const fetchEpisodes = async () => {
-              try {
-                  console.log(`Fetching episodes for podcast: ${id}`); // print the podcast that was found
-                  const snapshot = await get(ref(db, `podcasts/${id}/podcastepisode`));
+  useEffect(() => {
+    if (!id) {
+      console.warn("No ID provided in route parameters.");
+      return;
+    }
   
-                  if (snapshot.exists()) {
-                      const data = snapshot.val();
-                      // convert episodes object to an array
-                      const formattedEpisodes = Object.keys(data).map((key) => ({
-                          id: key,
-                          ...data[key],
-                      }));
-                      setEpisodes(formattedEpisodes);
-                  } else {
-                      console.log("No episodes found.");
-                  }
-              } catch (error) {
-                  console.error("Error fetching episodes:", error);
-              } finally {
-                  setLoading(false);
-              }
-          };
-          // return the episodes
-          fetchEpisodes();
-      }, [id]);
+    console.log("Component mounted. Podcaster ID:", id);
+  
+    // 
+    const fetchEpisodes = async () => {
+      try {
+        console.log(`Fetching episodes for podcast with ID: ${id}`);
+        const snapshot = await get(ref(db, `podcasts/${id}/podcastepisode`));
+  
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          console.log("Episodes retrieved from Firebase:", data); // log the retrieved data
+  
+          const formattedEpisodes = Object.keys(data).map((key) => ({
+            id: key,
+            ...data[key],
+          }));
+  
+          console.log("Formatted episodes:", formattedEpisodes); // log the formatted episodes
+          setEpisodes(formattedEpisodes);
+        } else {
+          console.log("No episodes found for this podcaster.");
+        }
+      } catch (error) {
+        console.error("Error fetching episodes:", error);
+      } finally {
+        setLoading(false);
+        console.log("Finished loading episodes.");
+      }
+    };
+  
+    fetchEpisodes();
+  }, [id]);
 
   return (
       <View style={styles.container}>
@@ -58,9 +68,6 @@ const PodcasterProfile: React.FC = () => {
         <View style={styles.profileTextContainer}>
           <Text style={styles.podcasterName}>{podcaster}</Text>
         </View>
-        <TouchableOpacity style={styles.followButton}>
-          <Text style={styles.followText}>Follow</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Bio Section */}
@@ -119,6 +126,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  // header image of the podcaster
   headerImage: {
     marginTop: -5,
     width: "100%",
@@ -130,6 +138,7 @@ const styles = StyleSheet.create({
     paddingTop: -50,
     top: -42,
   },
+  // naviagtion arrow at the top of the screen
   backButton: {
     position: "absolute",
     top: 40,
@@ -138,12 +147,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 4,
   },
+  // profile section of the podcaster
   profileSection: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: -2,
     paddingHorizontal: 20,
   },
+  // profile image of the podcaster
   profileImage: {
     top: -70,
     width: 100,
@@ -152,16 +163,19 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "white",
   },
+  // profile text of the podcaster
   profileTextContainer: {
     marginLeft: 10,
     flex: 1,
   },
+  // name of the podcaster
   podcasterName: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#000",
     top: -45,
   },
+ // description of the podcaster
   followerInfo: {
     fontSize: 13,
     color: "#666",
@@ -179,6 +193,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
   },
+  // bio of the podcaster
   bio: {
     fontSize: 14,
     color: "#333",
@@ -187,6 +202,7 @@ const styles = StyleSheet.create({
     top: -60,
     paddingHorizontal: 20,
   },
+  // title of the popular episodes
   popularTitle: {
     fontSize: 16,
     fontWeight: "bold",
@@ -195,6 +211,7 @@ const styles = StyleSheet.create({
     top: -70,
     paddingHorizontal: 20,
   },
+  // individual episode card
   episodeCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -211,15 +228,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingHorizontal: 20,
 },
+
   episodeImage: {
     width: 60,
     height: 60,
     borderRadius: 4,
     marginRight: 10,
   },
+  // image of the episode
   episodeInfo: {
     flex: 1,
   },
+  // title of the episode
   episodeTitle: {
     fontSize: 14,
     fontWeight: "bold",
@@ -228,11 +248,13 @@ const styles = StyleSheet.create({
   episodeText: {
     flex: 1
 },
+  // description of the episode
   episodeDescription: {
     fontSize: 13,
     color: "#444",
     marginTop: 2,
   },
+  // button that allows the user to see all episodes of the podcaster
   seeAllButton: {
     backgroundColor: "#000",
     borderRadius: 25,
@@ -242,6 +264,7 @@ const styles = StyleSheet.create({
     width: "70%",
     alignSelf: "center",
   },
+  // text that is displayed on the button
   seeAllText: {
     color: "#fff",
     fontSize: 15,
